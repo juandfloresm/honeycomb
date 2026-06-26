@@ -1,0 +1,8 @@
+
+include ':api'
+include ':util'
+include ':microservices:screen-service'
+include ':microservices:screen-service'
+include ':microservices:component-service'
+include ':microservices:explanation-service'
+include ':microservices:screen-composite-service'
