@@ -1,8 +1,18 @@
-Running:
+**Running**:
 
     $ ./gradlew build && docker compose build && docker compose up -d
 
-Shutting down:
+**Integration tests**
+
+    $ ./gradlew clean test
+
+**API Documentation**:
+
+Since we are using OpenAPI through springdoc-openapi, there is a Swagger UI interface you can use to discover and test the API, along documentation for endpoints:
+
+    http://localhost:8080/openapi/swagger-ui/index.html
+
+**Shutting down**:
 
     $ docker compose down
 
