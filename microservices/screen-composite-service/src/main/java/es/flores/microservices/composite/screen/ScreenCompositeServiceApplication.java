@@ -5,8 +5,7 @@ import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,11 +14,10 @@ import org.springframework.context.annotation.ComponentScan;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
+@Slf4j
 @SpringBootApplication
 @ComponentScan("es.flores")
 public class ScreenCompositeServiceApplication {
-
-  private static final Logger LOG = LoggerFactory.getLogger(ScreenCompositeServiceApplication.class);
 
   @Value("${api.common.version}")         String apiVersion;
   @Value("${api.common.title}")           String apiTitle;
@@ -70,7 +68,7 @@ public class ScreenCompositeServiceApplication {
 
   @Bean
   public Scheduler publishEventScheduler() {
-    LOG.info("Creates a messagingScheduler with connectionPoolSize = {}", threadPoolSize);
+    log.info("Creates a messagingScheduler with connectionPoolSize = {}", threadPoolSize);
     return Schedulers.newBoundedElastic(threadPoolSize, taskQueueSize, "publish-pool");
   }
 

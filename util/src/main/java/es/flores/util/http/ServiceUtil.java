@@ -16,7 +16,6 @@ public class ServiceUtil {
   private String serviceAddress = null;
 
   public ServiceUtil(@Value("${server.port}") String port) {
-
     this.port = port;
   }
 

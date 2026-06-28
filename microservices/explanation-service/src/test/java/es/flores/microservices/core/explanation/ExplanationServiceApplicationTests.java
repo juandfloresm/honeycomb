@@ -5,7 +5,6 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static es.flores.api.event.Event.Type.CREATE;
-import static es.flores.api.event.Event.Type.DELETE;
 
 import java.util.function.Consumer;
 import org.junit.jupiter.api.BeforeEach;
@@ -62,7 +61,7 @@ class ExplanationServiceApplicationTests extends MySqlTestBase {
     return getAndVerifyExplanationsByScreenId("?screenId=" + screenId, expectedStatus);
   }
 
-	private WebTestClient.BodyContentSpec getAndVerifyExplanationsByScreenId(String screenIdQuery, HttpStatus expectedStatus) {
+  private WebTestClient.BodyContentSpec getAndVerifyExplanationsByScreenId(String screenIdQuery, HttpStatus expectedStatus) {
     return client.get()
       .uri("/explanation" + screenIdQuery)
       .accept(APPLICATION_JSON)
@@ -72,7 +71,7 @@ class ExplanationServiceApplicationTests extends MySqlTestBase {
       .expectBody();
   }
 
-	private void sendCreateExplanationEvent(int screenId, int explanationId) {
+  private void sendCreateExplanationEvent(int screenId, int explanationId) {
     Explanation explanation = new Explanation(screenId, explanationId, "SA");
     Event<Integer, Explanation> event = new Event<>(CREATE, screenId, explanation);
     messageProcessor.accept(event);

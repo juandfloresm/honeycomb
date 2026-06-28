@@ -19,5 +19,11 @@ public interface ScreenService {
     produces = "application/json")
   Mono<Screen> getScreen(@PathVariable int screenId);
 
+  /**
+   * Sample usage: "curl -X DELETE $HOST:$PORT/screen?screenId=1".
+   *
+   * @param screenId Id of the screen
+   */
   Mono<Void> deleteScreen(int screenId);
+
 }

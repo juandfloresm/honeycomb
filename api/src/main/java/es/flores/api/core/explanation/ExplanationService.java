@@ -17,5 +17,11 @@ public interface ExplanationService {
 	@GetMapping(value = "/explanation", produces = "application/json")
 	Flux<Explanation> getExplanations(@RequestParam(value = "screenId", required = true) int screenId);
 
+	/**
+	 * Sample usage: "curl -X DELETE $HOST:$PORT/explanation?screenId=1".
+	 *
+	 * @param screenId Id of the screen
+	 */
 	Mono<Void> deleteExplanations(int screenId);
+
 }

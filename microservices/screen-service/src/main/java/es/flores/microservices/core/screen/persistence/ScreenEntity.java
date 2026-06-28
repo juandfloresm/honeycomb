@@ -1,7 +1,5 @@
 package es.flores.microservices.core.screen.persistence;
 
-import static java.lang.String.format;
-
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;

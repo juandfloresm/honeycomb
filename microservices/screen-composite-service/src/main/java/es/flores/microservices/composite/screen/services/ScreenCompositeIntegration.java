@@ -7,8 +7,8 @@ import static es.flores.api.event.Event.Type.DELETE;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.health.Health;
@@ -33,10 +33,9 @@ import es.flores.api.exceptions.InvalidInputException;
 import es.flores.api.exceptions.NotFoundException;
 import es.flores.util.http.HttpErrorInfo;
 
+@Slf4j
 @Service
 public class ScreenCompositeIntegration implements ScreenService, ComponentService, ExplanationService {
-
-  private static final Logger LOG = LoggerFactory.getLogger(ScreenCompositeIntegration.class);
 
   private final WebClient webClient;
   private final ObjectMapper mapper;
@@ -65,7 +64,6 @@ public class ScreenCompositeIntegration implements ScreenService, ComponentServi
     @Value("${app.explanation-service.host}") String explanationServiceHost,
     @Value("${app.explanation-service.port}") int  explanationServicePort
   ) {
-
     this.publishEventScheduler = publishEventScheduler;
     this.webClient = webClient.build();
     this.mapper = mapper;
@@ -87,9 +85,9 @@ public class ScreenCompositeIntegration implements ScreenService, ComponentServi
   @Override
   public Mono<Screen> getScreen(int screenId) {
     String url = screenServiceUrl + "/screen/" + screenId;
-    LOG.debug("Will call the getScreen API on URL: {}", url);
+    log.debug("Will call the getScreen API on URL: {}", url);
 
-    return webClient.get().uri(url).retrieve().bodyToMono(Screen.class).log(LOG.getName(), FINE).onErrorMap(WebClientResponseException.class, ex -> handleException(ex));
+    return webClient.get().uri(url).retrieve().bodyToMono(Screen.class).log(log.getName(), FINE).onErrorMap(WebClientResponseException.class, ex -> handleException(ex));
   }
 
   @Override
@@ -109,9 +107,9 @@ public class ScreenCompositeIntegration implements ScreenService, ComponentServi
   @Override
   public Flux<Component> getComponents(int screenId) {
     String url = componentServiceUrl + "/component?screenId=" + screenId;
-    LOG.debug("Will call the getComponents API on URL: {}", url);
+    log.debug("Will call the getComponents API on URL: {}", url);
     // Return an empty result if something goes wrong to make it possible for the composite service to return partial responses
-    return webClient.get().uri(url).retrieve().bodyToFlux(Component.class).log(LOG.getName(), FINE).onErrorResume(error -> empty());
+    return webClient.get().uri(url).retrieve().bodyToFlux(Component.class).log(log.getName(), FINE).onErrorResume(error -> empty());
   }
 
   @Override
@@ -132,9 +130,9 @@ public class ScreenCompositeIntegration implements ScreenService, ComponentServi
   @Override
   public Flux<Explanation> getExplanations(int screenId) {
     String url = explanationServiceUrl + "/explanation?screenId=" + screenId;
-    LOG.debug("Will call the getExplanations API on URL: {}", url);
+    log.debug("Will call the getExplanations API on URL: {}", url);
     // Return an empty result if something goes wrong to make it possible for the composite service to return partial responses
-    return webClient.get().uri(url).retrieve().bodyToFlux(Explanation.class).log(LOG.getName(), FINE).onErrorResume(error -> empty());
+    return webClient.get().uri(url).retrieve().bodyToFlux(Explanation.class).log(log.getName(), FINE).onErrorResume(error -> empty());
   }
 
   @Override
@@ -153,15 +151,15 @@ public class ScreenCompositeIntegration implements ScreenService, ComponentServi
 
   private Mono<Health> getHealth(String url) {
     url += "/actuator/health";
-    LOG.debug("Will call the Health API on URL: {}", url);
+    log.debug("Will call the Health API on URL: {}", url);
     return webClient.get().uri(url).retrieve().bodyToMono(String.class)
       .map(s -> new Health.Builder().up().build())
       .onErrorResume(ex -> Mono.just(new Health.Builder().down(ex).build()))
-      .log(LOG.getName(), FINE);
+      .log(log.getName(), FINE);
   }
 
   private void sendMessage(String bindingName, Event event) {
-    LOG.debug("Sending a {} message to {}", event.getEventType(), bindingName);
+    log.debug("Sending a {} message to {}", event.getEventType(), bindingName);
     Message message = MessageBuilder.withPayload(event)
       .setHeader("partitionKey", event.getKey())
       .build();
@@ -170,7 +168,7 @@ public class ScreenCompositeIntegration implements ScreenService, ComponentServi
 
   private Throwable handleException(Throwable ex) {
     if (!(ex instanceof WebClientResponseException)) {
-      LOG.warn("Got a unexpected error: {}, will rethrow it", ex.toString());
+      log.warn("Got a unexpected error: {}, will rethrow it", ex.toString());
       return ex;
     }
 
@@ -185,8 +183,8 @@ public class ScreenCompositeIntegration implements ScreenService, ComponentServi
         return new InvalidInputException(getErrorMessage(wcre));
 
       default:
-        LOG.warn("Got an unexpected HTTP error: {}, will rethrow it", wcre.getStatusCode());
-        LOG.warn("Error body: {}", wcre.getResponseBodyAsString());
+        log.warn("Got an unexpected HTTP error: {}, will rethrow it", wcre.getStatusCode());
+        log.warn("Error body: {}", wcre.getResponseBodyAsString());
         return ex;
     }
   }
