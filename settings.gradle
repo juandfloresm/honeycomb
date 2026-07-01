@@ -1,6 +1,7 @@
 
 include ':api'
 include ':util'
+include ':microservices:user-service'
 include ':microservices:screen-service'
 include ':microservices:screen-service'
 include ':microservices:component-service'
